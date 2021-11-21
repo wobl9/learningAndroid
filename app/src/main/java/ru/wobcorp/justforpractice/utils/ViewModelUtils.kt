@@ -18,8 +18,8 @@ fun ViewModel.emitSingleEvent(action: suspend () -> Unit) {
     }
 }
 
-fun <T> Flow<T>.observe(scope: LifecycleCoroutineScope, action: () -> Unit) {
+fun <T> Flow<T>.observe(scope: LifecycleCoroutineScope, action: (T) -> Unit) {
     scope.launchWhenCreated {
-        collect { action.invoke() }
+        collect { action.invoke(it) }
     }
 }
