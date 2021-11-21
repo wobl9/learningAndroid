@@ -1,4 +1,4 @@
-# learningAndroid
+# Learning Android
 
 This is sample app for learning android.
 
