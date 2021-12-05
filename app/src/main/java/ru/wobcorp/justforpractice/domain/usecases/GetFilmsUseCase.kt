@@ -7,7 +7,7 @@ import ru.wobcorp.justforpractice.domain.models.FilmsSourceModel
 import javax.inject.Inject
 
 class GetFilmsUseCase @Inject constructor(
-    private val filmsRepository: FilmsRepository
+    private val filmsRepository: FilmsRepository,
 ) {
     fun execute(page: Int, language: FilmsLanguage): Single<FilmsSourceModel> {
         return filmsRepository.getFilms(page, language)
