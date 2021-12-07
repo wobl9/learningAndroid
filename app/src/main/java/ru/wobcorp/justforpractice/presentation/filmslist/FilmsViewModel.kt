@@ -16,6 +16,8 @@ class FilmsViewModel(
 ) : BaseViewModel() {
 
     val films = event(emptyList<FilmsSourceModel>())
+    val test = 0
+
 
     fun getFilms() {
         getFilmsUseCase.execute(1, FilmsLanguage.RUS)
