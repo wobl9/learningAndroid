@@ -13,4 +13,11 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="FilmPoster">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:scaleType">centerCrop</item>
+        <item name="android:transitionName">@string/poster_of_film</item>
+        <item name="android:background">@color/black</item>
+    </style>
 </resources>
