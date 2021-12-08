@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">JustForPractice</string>
     <string name="login_screen_auth">Авторизоваться</string>
+    <string name="poster_of_film">poster of film</string>
 </resources>

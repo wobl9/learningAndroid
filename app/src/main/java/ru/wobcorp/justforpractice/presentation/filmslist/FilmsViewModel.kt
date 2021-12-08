@@ -16,13 +16,12 @@ class FilmsViewModel(
 ) : BaseViewModel() {
 
     val films = event(emptyList<FilmsSourceModel>())
-    val test = 0
-
 
     fun getFilms() {
         getFilmsUseCase.execute(1, FilmsLanguage.RUS)
             .get(disposables) { filmsSourceModel ->
                 Timber.d(filmsSourceModel.toString())
+                films.value = listOf(filmsSourceModel)
             }
     }
 
