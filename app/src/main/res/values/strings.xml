@@ -2,4 +2,7 @@
     <string name="app_name">JustForPractice</string>
     <string name="login_screen_auth">Авторизоваться</string>
     <string name="poster_of_film">poster of film</string>
+    <string name="title">Title</string>
+    <string name="overview">Film\'s overview</string>
+    <string name="list_is_empty">Список фильмов пуст</string>
 </resources>

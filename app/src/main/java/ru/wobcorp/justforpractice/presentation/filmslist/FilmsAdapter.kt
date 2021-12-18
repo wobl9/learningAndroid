@@ -7,17 +7,29 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ru.wobcorp.justforpractice.databinding.ListItemFilmBinding
 import ru.wobcorp.justforpractice.domain.models.FilmModel
+import ru.wobcorp.justforpractice.glide.RemoteImage
 import ru.wobcorp.justforpractice.utils.FilmDiffUtilCallback
 
-class FilmsAdapter(
-    private val filmsList: List<FilmModel>
-) : ListAdapter<FilmModel, FilmsAdapter.FilmHolder>(FilmDiffUtilCallback()) {
+class FilmsAdapter : ListAdapter<FilmModel, FilmsAdapter.FilmHolder>(FilmDiffUtilCallback()) {
+
+    private var filmsList: List<FilmModel> = mutableListOf()
+
+    fun setItems(films: List<FilmModel>) {
+        filmsList = films.map { film ->
+            FilmModel(film.id, film.title, film.overview, film.imageLink)
+        }
+    }
 
     class FilmHolder(private val binding: ListItemFilmBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: FilmModel) {
+            itemView.setOnClickListener {
+                val callback = it.context as FilmsFragment.Callbacks
+                callback.onFilmSelected(item.id)
+            }
+
             Glide.with(itemView.context)
-                .load("https://image.tmdb.org/t/p/w500/${item.imageLink}")
+                .load(RemoteImage(item.imageLink))
                 .into(binding.filmPoster)
         }
     }
@@ -31,7 +43,6 @@ class FilmsAdapter(
             )
         )
     }
-
 
     override fun onBindViewHolder(holder: FilmHolder, position: Int) {
         holder.bind(filmsList[position])

@@ -8,7 +8,6 @@ import ru.wobcorp.justforpractice.domain.usecases.GetFilmsUseCase
 import ru.wobcorp.justforpractice.utils.BaseViewModel
 import ru.wobcorp.justforpractice.utils.event
 import ru.wobcorp.justforpractice.utils.get
-import timber.log.Timber
 import javax.inject.Inject
 
 class FilmsViewModel(
@@ -20,7 +19,6 @@ class FilmsViewModel(
     fun getFilms() {
         getFilmsUseCase.execute(1, FilmsLanguage.RUS)
             .get(disposables) { filmsSourceModel ->
-                Timber.d(filmsSourceModel.toString())
                 films.value = listOf(filmsSourceModel)
             }
     }
