@@ -7,27 +7,24 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import io.cabriole.decorator.ColumnProvider
-import io.cabriole.decorator.GridBoundsMarginDecoration
 import ru.wobcorp.justforpractice.Application
 import ru.wobcorp.justforpractice.R
 import ru.wobcorp.justforpractice.databinding.FilmsFragmentBinding
 import ru.wobcorp.justforpractice.domain.models.FilmModel
-import ru.wobcorp.justforpractice.domain.models.FilmsSourceModel
+import ru.wobcorp.justforpractice.presentation.filmdetail.FilmDetailFragment
+import ru.wobcorp.justforpractice.presentation.filmslist.adapter.FilmHolder
+import ru.wobcorp.justforpractice.presentation.filmslist.adapter.FilmsAdapter
+import ru.wobcorp.justforpractice.utils.BaseViewState
+import ru.wobcorp.justforpractice.utils.SpaceItemDecoration
 import ru.wobcorp.justforpractice.utils.observe
+import ru.wobcorp.justforpractice.utils.replace
 import javax.inject.Inject
 
 private const val DEFAULT_GRID_COUNT = 3
+private const val DEFAULT_SPACING = 10
 
-class FilmsFragment : Fragment(R.layout.films_fragment) {
-
-    interface Callbacks {
-        fun onFilmSelected(filmId: Int)
-    }
-
-    private var _binding: FilmsFragmentBinding? = null
-    private val binding get() = _binding!!
-    private val adapter: FilmsAdapter = FilmsAdapter()
+class FilmsFragment : Fragment(R.layout.films_fragment),
+    FilmHolder.OnFilmItemClickListener {
 
     companion object {
         fun newInstance() = FilmsFragment()
@@ -36,6 +33,9 @@ class FilmsFragment : Fragment(R.layout.films_fragment) {
     @Inject
     lateinit var factory: FilmsViewModel.Factory
 
+    private var _binding: FilmsFragmentBinding? = null
+    private val binding get() = _binding!!
+    private val adapter: FilmsAdapter = FilmsAdapter(this)
     private val viewModel by viewModels<FilmsViewModel> { factory }
 
     override fun onAttach(context: Context) {
@@ -46,36 +46,50 @@ class FilmsFragment : Fragment(R.layout.films_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FilmsFragmentBinding.bind(view)
-        viewModel.getFilms()
-        viewModel.films.observe(lifecycleScope) {
-            initializeView(it)
-        }
-    }
-
-    private fun initializeView(list: List<FilmsSourceModel>) {
-        binding.filmsList.layoutManager =
-            StaggeredGridLayoutManager(DEFAULT_GRID_COUNT, StaggeredGridLayoutManager.VERTICAL)
         decorateRecyclerView()
-        if (list.isNotEmpty()) {
-            val filmList: List<FilmModel> = list.first().films
-            adapter.setItems(filmList)
-            binding.filmsList.adapter = adapter
-            binding.emptyList.visibility = View.INVISIBLE
-            binding.filmsList.visibility = View.VISIBLE
-        }
-    }
-
-    private fun decorateRecyclerView() {
-        binding.filmsList.addItemDecoration(GridBoundsMarginDecoration.create(
-            context?.resources?.getDimensionPixelSize(R.dimen.left_right_margin)!!,
-            columnProvider = object : ColumnProvider {
-                override fun getNumberOfColumns(): Int = DEFAULT_GRID_COUNT
+        viewModel.getFilms()
+        viewModel.state.observe(lifecycleScope) { state ->
+            when (state) {
+                is BaseViewState.Loading -> initializeEmptyView()
+                is BaseViewState.Success<*> -> viewModel.films.observe(lifecycleScope) {
+                    initializeView(it)
+                }
+                is BaseViewState.Error -> initializeEmptyView()
             }
-        ))
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onFilmItemClick(filmId: Int) {
+        parentFragmentManager.replace(
+            R.id.mainContainer, FilmDetailFragment.newInstance(filmId)
+        )
+    }
+
+    private fun initializeView(list: List<FilmModel>) {
+        adapter.setItems(list)
+        binding.filmsList.adapter = adapter
+        binding.emptyList.visibility = View.INVISIBLE
+        binding.filmsList.visibility = View.VISIBLE
+    }
+
+    private fun initializeEmptyView() {
+        binding.emptyList.visibility = View.VISIBLE
+        binding.filmsList.visibility = View.INVISIBLE
+    }
+
+    private fun decorateRecyclerView() {
+        binding.filmsList.layoutManager =
+            StaggeredGridLayoutManager(DEFAULT_GRID_COUNT, StaggeredGridLayoutManager.VERTICAL)
+        binding.filmsList.addItemDecoration(
+            SpaceItemDecoration(
+                DEFAULT_GRID_COUNT,
+                DEFAULT_SPACING
+            )
+        )
     }
 }

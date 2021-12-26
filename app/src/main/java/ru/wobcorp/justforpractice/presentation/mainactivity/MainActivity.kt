@@ -6,11 +6,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import ru.wobcorp.justforpractice.R
 import ru.wobcorp.justforpractice.databinding.MainActivityBinding
-import ru.wobcorp.justforpractice.presentation.filmdetail.FilmDetailFragment
 import ru.wobcorp.justforpractice.presentation.filmslist.FilmsFragment
 import ru.wobcorp.justforpractice.utils.replace
 
-class MainActivity : AppCompatActivity(), FilmsFragment.Callbacks {
+class MainActivity : AppCompatActivity() {
 
     companion object {
         fun getIntent(context: Context): Intent {
@@ -27,11 +26,5 @@ class MainActivity : AppCompatActivity(), FilmsFragment.Callbacks {
                 R.id.mainContainer,
                 FilmsFragment.newInstance()
             )
-    }
-
-    override fun onFilmSelected(filmId: Int) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.mainContainer, FilmDetailFragment.newInstance(filmId))
-            .addToBackStack(null).commit()
     }
 }

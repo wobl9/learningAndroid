@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/filmCard"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="3dp"
-    android:background="@color/black">
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/filmPoster"
+    style="@style/FilmPoster"
+    android:layout_height="180dp"
+    android:contentDescription="@string/poster_of_film">
 
-    <ImageView
-        android:id="@+id/filmPoster"
-        style="@style/FilmPoster"
-        android:layout_height="180dp"
-        android:contentDescription="@string/poster_of_film"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ImageView>
