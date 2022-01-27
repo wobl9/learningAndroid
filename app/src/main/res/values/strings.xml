@@ -5,4 +5,5 @@
     <string name="title">Title</string>
     <string name="overview">Film\'s overview</string>
     <string name="list_is_empty">Список фильмов пуст</string>
+    <string name="film_detail_not_found">Детали фильма не найдены</string>
 </resources>

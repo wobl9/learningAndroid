@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MainActivityBinding.inflate(layoutInflater).root.let(::setContentView)
+        supportActionBar?.hide()
 
         if (savedInstanceState == null)
             supportFragmentManager.replace(

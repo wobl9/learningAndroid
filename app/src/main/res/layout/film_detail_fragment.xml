@@ -1,44 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
     tools:context=".presentation.filmdetail.FilmDetailFragment">
 
-    <ImageView
-        android:id="@+id/filmPoster"
-        style="@style/FilmPoster"
-        android:layout_height="240dp"
-        android:contentDescription="@string/poster_of_film"
-        android:scaleType="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/filmTitle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:textSize="40sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filmPoster"
-        tools:text="@string/title" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/filmOverview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:textColor="@color/white"
-        android:textSize="30sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filmTitle"
-        tools:text="@string/overview" />
+        <ImageView
+            android:id="@+id/filmPoster"
+            style="@style/FilmPoster"
+            android:layout_height="250dp"
+            android:contentDescription="@string/poster_of_film"
+            android:scaleType="center" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/filmTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            tools:text="@string/title" />
+
+        <TextView
+            android:id="@+id/filmOverview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            tools:text="@string/overview" />
+
+    </LinearLayout>
+
+</ScrollView>
