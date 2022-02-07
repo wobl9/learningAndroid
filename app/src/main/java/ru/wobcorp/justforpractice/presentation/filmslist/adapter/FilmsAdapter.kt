@@ -17,15 +17,13 @@ class FilmsAdapter : ListAdapter<FilmModel, FilmHolder>(FilmDiffUtilCallback()) 
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            )
+            ),
+            onFilmItemClickListener
         )
     }
 
     override fun onBindViewHolder(holder: FilmHolder, position: Int) {
         val filmModel = getItem(position)
         holder.bind(filmModel)
-        holder.itemView.setOnClickListener {
-            onFilmItemClickListener?.invoke(filmModel)
-        }
     }
 }

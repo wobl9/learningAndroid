@@ -57,7 +57,7 @@ class FilmDetailFragment : Fragment(R.layout.film_detail_fragment) {
     }
 
     private fun observeViewModel() {
-        viewModel.getFilms()
+        viewModel.getFilmById()
         viewModel.state.observe(lifecycleScope) { state ->
             @Suppress("UNCHECKED_CAST")
             when (state) {

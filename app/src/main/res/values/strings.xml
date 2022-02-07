@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">JustForPractice</string>
     <string name="login_screen_auth">Авторизоваться</string>
-    <string name="poster_of_film">poster of film</string>
-    <string name="title">Title</string>
-    <string name="overview">Film\'s overview</string>
-    <string name="list_is_empty">Список фильмов пуст</string>
+    <string name="poster_of_film">Постер фильма</string>
+    <string name="title">Название фильма</string>
+    <string name="overview">Описание фильма</string>
+    <string name="tv_error">Ошибка загрузки</string>
     <string name="film_detail_not_found">Детали фильма не найдены</string>
+    <string name="tv_loading">Идёт загрузка…</string>
+    <string name="btn_retry">Повторить попытку</string>
 </resources>

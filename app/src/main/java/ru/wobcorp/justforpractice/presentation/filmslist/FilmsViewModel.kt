@@ -15,12 +15,16 @@ class FilmsViewModel(
     private val getFilmsUseCase: GetFilmsUseCase
 ) : BaseViewModel() {
 
+    companion object {
+        private const val PAGE_OF_FILMS_LIST = 1
+    }
+
     private val _state = event<BaseViewState>(BaseViewState.Loading)
     val state: StateFlow<BaseViewState>
         get() = _state
 
     fun getFilms() {
-        getFilmsUseCase.execute(1, FilmsLanguage.RUS)
+        getFilmsUseCase.execute(PAGE_OF_FILMS_LIST, FilmsLanguage.RUS)
             .get(
                 disposable = disposables,
                 onError = {

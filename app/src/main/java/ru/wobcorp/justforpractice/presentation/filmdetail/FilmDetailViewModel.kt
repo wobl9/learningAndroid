@@ -6,6 +6,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.StateFlow
 import ru.wobcorp.justforpractice.domain.models.FilmsLanguage
+import ru.wobcorp.justforpractice.domain.usecases.GetFilmByIdUseCase
 import ru.wobcorp.justforpractice.domain.usecases.GetFilmsUseCase
 import ru.wobcorp.justforpractice.utils.BaseViewModel
 import ru.wobcorp.justforpractice.utils.BaseViewState
@@ -13,7 +14,7 @@ import ru.wobcorp.justforpractice.utils.event
 import ru.wobcorp.justforpractice.utils.get
 
 class FilmDetailViewModel @AssistedInject constructor(
-    private val getFilmsUseCase: GetFilmsUseCase,
+    private val getFilmByIdUseCase: GetFilmByIdUseCase,
     @Assisted private val filmId: Int
 ) : BaseViewModel() {
 
@@ -21,18 +22,16 @@ class FilmDetailViewModel @AssistedInject constructor(
     val state: StateFlow<BaseViewState>
         get() = _state
 
-    fun getFilms() {
-        getFilmsUseCase.execute(1, FilmsLanguage.RUS)
-            .get(
-                disposable = disposables,
-                onError = {
-                    _state.value = BaseViewState.Error(it)
-                },
-                onSuccess = { filmsSourceModel ->
-                    val film = filmsSourceModel.films.find { it.id == filmId }
-                    _state.value = BaseViewState.Success(film)
-                }
-            )
+    fun getFilmById(){
+        getFilmByIdUseCase.execute(filmId).get(
+            disposable = disposables,
+            onError = {
+                _state.value = BaseViewState.Error(it)
+            },
+            onSuccess = {
+                _state.value = BaseViewState.Success(it)
+            }
+        )
     }
 
     @dagger.assisted.AssistedFactory
