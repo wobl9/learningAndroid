@@ -9,7 +9,15 @@ import ru.wobcorp.justforpractice.utils.FilmDiffUtilCallback
 
 class FilmsAdapter : ListAdapter<FilmModel, FilmHolder>(FilmDiffUtilCallback()) {
 
-    var onFilmItemClickListener: ((FilmModel) -> Unit)? = null
+    private var onFilmItemClickListener: OnFilmItemClickListener? = null
+
+    fun attachListener(onFilmItemClickListener: OnFilmItemClickListener) {
+        this.onFilmItemClickListener = onFilmItemClickListener
+    }
+
+    interface OnFilmItemClickListener {
+        fun onFilmItemClick(filmId: Int)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmHolder {
         return FilmHolder(

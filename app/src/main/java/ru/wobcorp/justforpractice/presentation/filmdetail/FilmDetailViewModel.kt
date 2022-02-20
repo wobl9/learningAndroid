@@ -7,11 +7,11 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.StateFlow
 import ru.wobcorp.justforpractice.domain.models.FilmsLanguage
 import ru.wobcorp.justforpractice.domain.usecases.GetFilmByIdUseCase
-import ru.wobcorp.justforpractice.domain.usecases.GetFilmsUseCase
 import ru.wobcorp.justforpractice.utils.BaseViewModel
 import ru.wobcorp.justforpractice.utils.BaseViewState
 import ru.wobcorp.justforpractice.utils.event
 import ru.wobcorp.justforpractice.utils.get
+import timber.log.Timber
 
 class FilmDetailViewModel @AssistedInject constructor(
     private val getFilmByIdUseCase: GetFilmByIdUseCase,
@@ -22,17 +22,20 @@ class FilmDetailViewModel @AssistedInject constructor(
     val state: StateFlow<BaseViewState>
         get() = _state
 
-    fun getFilmById(){
-        getFilmByIdUseCase.execute(filmId).get(
-            disposable = disposables,
-            onError = {
-                _state.value = BaseViewState.Error(it)
-            },
-            onSuccess = {
-                _state.value = BaseViewState.Success(it)
-            }
-        )
+    fun getFilmById() {
+        getFilmByIdUseCase.execute(filmId, FilmsLanguage.RUS)
+            .doOnSubscribe { _state.value = BaseViewState.Loading }
+            .get(
+                disposable = disposables,
+                onError = { error ->
+                    Timber.d(error)
+                },
+                onSuccess = { filmModel ->
+                    _state.value = BaseViewState.Success(filmModel)
+                }
+            )
     }
+
 
     @dagger.assisted.AssistedFactory
     interface AssistedFactory {

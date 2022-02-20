@@ -13,6 +13,7 @@ import ru.wobcorp.justforpractice.databinding.FilmsFragmentBinding
 import ru.wobcorp.justforpractice.domain.models.FilmModel
 import ru.wobcorp.justforpractice.presentation.filmslist.adapter.FilmsAdapter
 import ru.wobcorp.justforpractice.utils.BaseViewState
+import ru.wobcorp.justforpractice.utils.SharedPrefHelper
 import ru.wobcorp.justforpractice.utils.SpaceItemDecoration
 import ru.wobcorp.justforpractice.utils.observe
 import javax.inject.Inject
@@ -22,8 +23,8 @@ private const val DEFAULT_SPACING = 5
 
 class FilmsFragment : Fragment(R.layout.films_fragment) {
 
-    interface OnFilmClickListener{
-        fun onFilmClick(filmId: Int)
+    interface FilmDetailLauncher {
+        fun launchFilmDetail(filmId: Int)
     }
 
     companion object {
@@ -33,7 +34,7 @@ class FilmsFragment : Fragment(R.layout.films_fragment) {
     @Inject
     lateinit var factory: FilmsViewModel.Factory
 
-    private lateinit var onFilmClickListener: OnFilmClickListener
+    private lateinit var filmDetailLauncher: FilmDetailLauncher
     private lateinit var adapter: FilmsAdapter
     private var _binding: FilmsFragmentBinding? = null
     private val binding get() = _binding!!
@@ -42,8 +43,8 @@ class FilmsFragment : Fragment(R.layout.films_fragment) {
     override fun onAttach(context: Context) {
         DaggerFilmsComponent.factory().create(Application.dagger).inject(this)
         super.onAttach(context)
-        if (context is OnFilmClickListener){
-            onFilmClickListener = context
+        if (context is FilmDetailLauncher) {
+            filmDetailLauncher = context
         }
     }
 
@@ -51,6 +52,11 @@ class FilmsFragment : Fragment(R.layout.films_fragment) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FilmsFragmentBinding.bind(view)
         adapter = FilmsAdapter()
+        adapter.attachListener(object : FilmsAdapter.OnFilmItemClickListener {
+            override fun onFilmItemClick(filmId: Int) {
+                filmDetailLauncher.launchFilmDetail(filmId)
+            }
+        })
         decorateRecyclerView()
         observeViewModel()
     }
@@ -63,27 +69,26 @@ class FilmsFragment : Fragment(R.layout.films_fragment) {
     private fun observeViewModel() {
         viewModel.getFilms()
         viewModel.state.observe(lifecycleScope) {
-            renderingState(it)
+            renderState(it)
         }
     }
 
-    private fun renderingState(state: BaseViewState){
+    private fun renderState(state: BaseViewState) {
         @Suppress("UNCHECKED_CAST")
-        when(state){
+        when (state) {
             is BaseViewState.Loading -> {
             }
             is BaseViewState.Success<*> -> {
                 adapter.submitList(state.data as List<FilmModel>)
-                bindingSuccessRender()
-                setupClickListener()
+                bindSuccessRendering()
             }
             is BaseViewState.Error -> {
-                bindingErrorRender()
+                bindErrorRendering()
             }
         }
     }
 
-    private fun bindingErrorRender() {
+    private fun bindErrorRendering() {
         with(binding) {
             tvLoading.isVisible = false
             tvError.isVisible = true
@@ -94,7 +99,7 @@ class FilmsFragment : Fragment(R.layout.films_fragment) {
         }
     }
 
-    private fun bindingSuccessRender() {
+    private fun bindSuccessRendering() {
         with(binding) {
             filmsList.adapter = adapter
             filmsList.isVisible = true
@@ -103,19 +108,11 @@ class FilmsFragment : Fragment(R.layout.films_fragment) {
     }
 
     private fun decorateRecyclerView() {
-        with(binding.filmsList) {
-            addItemDecoration(
-                SpaceItemDecoration(
-                    DEFAULT_GRID_COUNT,
-                    DEFAULT_SPACING
-                )
+        binding.filmsList.addItemDecoration(
+            SpaceItemDecoration(
+                DEFAULT_GRID_COUNT,
+                DEFAULT_SPACING
             )
-        }
-    }
-
-    private fun setupClickListener() {
-        adapter.onFilmItemClickListener = {
-            onFilmClickListener.onFilmClick(it.id)
-        }
+        )
     }
 }

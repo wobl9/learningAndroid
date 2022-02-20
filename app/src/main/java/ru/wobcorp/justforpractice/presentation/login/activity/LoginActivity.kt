@@ -12,7 +12,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         LoginActivityBinding.inflate(layoutInflater).root.let(::setContentView)
-        supportActionBar?.hide()
 
         if (savedInstanceState == null) {
             supportFragmentManager.replace(R.id.loginContainer, LoginFragment.newInstance())

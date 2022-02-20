@@ -1,46 +1,45 @@
 package ru.wobcorp.justforpractice.data.repositories
 
-import io.reactivex.rxjava3.annotations.NonNull
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.disposables.CompositeDisposable
+import ru.wobcorp.justforpractice.data.dto.FilmDto
 import ru.wobcorp.justforpractice.data.mappers.FilmsMapper
 import ru.wobcorp.justforpractice.data.remote.services.FilmsService
+import ru.wobcorp.justforpractice.data.stores.FilmsDataStore
 import ru.wobcorp.justforpractice.domain.models.FilmModel
 import ru.wobcorp.justforpractice.domain.models.FilmsLanguage
 import ru.wobcorp.justforpractice.domain.models.FilmsSourceModel
-import ru.wobcorp.justforpractice.utils.get
+import ru.wobcorp.justforpractice.utils.Either
+import timber.log.Timber
 import javax.inject.Inject
 
 class FilmsRepository @Inject constructor(
     private val remote: FilmsService,
-    private val filmsMapper: FilmsMapper
+    private val filmsMapper: FilmsMapper,
+    private val filmsDataStore: FilmsDataStore = FilmsDataStore.getInstance()
 ) {
 
     fun getFilms(page: Int, language: FilmsLanguage): Single<FilmsSourceModel> {
         return remote.getPopularFilms(page, language.query)
+            .flatMap { filmDto ->
+                filmsDataStore.saveFilmsFromSource(filmDto).andThen(Single.just(filmDto))
+            }
             .map(filmsMapper::sourceToDomain)
     }
 
-    fun getFilmById(filmId: Int): Single<FilmModel> {
-        var film = FilmsSourceModel.getFilmById(filmId)
-        if (film == null) {
-            getFilms(1, FilmsLanguage.RUS).get(
-                disposable = CompositeDisposable(),
-                onError = {},
-                onSuccess = {
-                    it.films.find { filmModel ->
-                        filmModel.id == filmId
-                    }?.let { filmModel ->
-                        FilmsSourceModel.saveFilm(filmModel)
-                        film = filmModel
-                    }
+    fun getFilmById(filmId: Int, language: FilmsLanguage): Single<FilmModel> {
+        return filmsDataStore.getFilmById(filmId).flatMap { result ->
+            when (result) {
+                is Either.Left -> {
+                    Single.just(result.l)
                 }
-            )
-        } else {
-            return Single.create {
-                it.onSuccess(film as @NonNull FilmModel)
-            }
+                is Either.Right -> {
+                    getRemoteFilmById(filmId, language)
+                }
+            }.map(filmsMapper::filmToDomain)
         }
-        return Single.just(film as FilmModel)
+    }
+
+    private fun getRemoteFilmById(filmId: Int, language: FilmsLanguage): Single<FilmDto> {
+        return remote.getFilmById(filmId, language.query)
     }
 }

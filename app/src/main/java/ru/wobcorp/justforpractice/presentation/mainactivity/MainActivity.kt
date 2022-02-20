@@ -10,7 +10,7 @@ import ru.wobcorp.justforpractice.presentation.filmdetail.FilmDetailFragment
 import ru.wobcorp.justforpractice.presentation.filmslist.FilmsFragment
 import ru.wobcorp.justforpractice.utils.replace
 
-class MainActivity : AppCompatActivity(), FilmsFragment.OnFilmClickListener {
+class MainActivity : AppCompatActivity(), FilmsFragment.FilmDetailLauncher {
 
     companion object {
         fun getIntent(context: Context): Intent {
@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity(), FilmsFragment.OnFilmClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MainActivityBinding.inflate(layoutInflater).root.let(::setContentView)
-        supportActionBar?.hide()
 
         if (savedInstanceState == null)
             supportFragmentManager.replace(
@@ -30,8 +29,10 @@ class MainActivity : AppCompatActivity(), FilmsFragment.OnFilmClickListener {
             )
     }
 
-    override fun onFilmClick(filmId: Int) {
-        supportFragmentManager.replace(R.id.mainContainer,
-            FilmDetailFragment.newInstance(filmId))
+    override fun launchFilmDetail(filmId: Int) {
+        supportFragmentManager.replace(
+            R.id.mainContainer,
+            FilmDetailFragment.newInstance(filmId)
+        )
     }
 }
