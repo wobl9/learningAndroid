@@ -2,13 +2,12 @@ package ru.wobcorp.justforpractice.presentation.filmslist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.coroutines.flow.StateFlow
 import ru.wobcorp.justforpractice.domain.models.FilmsLanguage
 import ru.wobcorp.justforpractice.domain.usecases.GetFilmsUseCase
 import ru.wobcorp.justforpractice.utils.BaseViewModel
-import ru.wobcorp.justforpractice.utils.BaseViewState
 import ru.wobcorp.justforpractice.utils.event
 import ru.wobcorp.justforpractice.utils.get
+import ru.wobcorp.justforpractice.utils.states.FilmsViewState
 import javax.inject.Inject
 
 class FilmsViewModel(
@@ -19,19 +18,18 @@ class FilmsViewModel(
         private const val PAGE_OF_FILMS_LIST = 1
     }
 
-    private val _state = event<BaseViewState>(BaseViewState.Loading)
-    val state: StateFlow<BaseViewState>
-        get() = _state
+    val state = event<FilmsViewState>(FilmsViewState.Loading)
 
     fun getFilms() {
         getFilmsUseCase.execute(PAGE_OF_FILMS_LIST, FilmsLanguage.RUS)
+            .doOnSubscribe { state.value = FilmsViewState.Loading }
             .get(
                 disposable = disposables,
-                onError = {
-                    _state.value = BaseViewState.Error(it)
+                onError = { error ->
+                    state.value = FilmsViewState.Error(error)
                 },
-                onSuccess = {
-                    _state.value = BaseViewState.Success(it.films)
+                onSuccess = { filmsSourceModule ->
+                    state.value = FilmsViewState.Success(filmsSourceModule.films)
                 }
             )
     }

@@ -1,30 +1,29 @@
 package ru.wobcorp.justforpractice.presentation.filmslist
 
 import dagger.Component
-import dagger.Module
-import ru.wobcorp.justforpractice.data.stores.FilmsDataStore
 import ru.wobcorp.justforpractice.di.ApplicationDependencies
 import ru.wobcorp.justforpractice.presentation.filmdetail.FilmDetailFragment
-import javax.inject.Singleton
+import ru.wobcorp.justforpractice.presentation.mainactivity.FilmsActivity
+import javax.inject.Scope
+
+@Retention
+@Scope
+annotation class FilmsScope
 
 @Component(
-    dependencies = [ApplicationDependencies::class],
-    modules = [FilmsComponent.FilmsListModule::class]
+    dependencies = [ApplicationDependencies::class]
 )
+
+@FilmsScope
 interface FilmsComponent {
     fun inject(fragment: FilmsFragment)
     fun inject(fragment: FilmDetailFragment)
+    fun inject(filmsActivity: FilmsActivity)
 
     @Component.Factory
     interface Factory {
         fun create(
             dependencies: ApplicationDependencies
         ): FilmsComponent
-    }
-
-    @Module
-    abstract class FilmsListModule {
-        @Singleton
-        abstract fun provideFilmsDataStore(): FilmsDataStore
     }
 }

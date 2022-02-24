@@ -10,3 +10,8 @@ fun Fragment.putArguments(key: String, arg: Int): Fragment {
         }
     }
 }
+
+@Suppress("UNCHECKED_CAST")
+fun <T> Fragment.requireActivityComponent(): T {
+    return (requireActivity() as ComponentProvider<T>).provideComponent()
+}

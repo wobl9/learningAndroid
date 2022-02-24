@@ -15,7 +15,7 @@ import javax.inject.Inject
 class FilmsRepository @Inject constructor(
     private val remote: FilmsService,
     private val filmsMapper: FilmsMapper,
-    private val filmsDataStore: FilmsDataStore = FilmsDataStore.getInstance()
+    private val filmsDataStore: FilmsDataStore
 ) {
 
     fun getFilms(page: Int, language: FilmsLanguage): Single<FilmsSourceModel> {

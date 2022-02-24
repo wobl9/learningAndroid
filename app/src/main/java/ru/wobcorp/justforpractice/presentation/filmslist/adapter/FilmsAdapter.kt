@@ -7,16 +7,12 @@ import ru.wobcorp.justforpractice.databinding.ListItemFilmBinding
 import ru.wobcorp.justforpractice.domain.models.FilmModel
 import ru.wobcorp.justforpractice.utils.FilmDiffUtilCallback
 
-class FilmsAdapter : ListAdapter<FilmModel, FilmHolder>(FilmDiffUtilCallback()) {
+class FilmsAdapter(
+    private val onFilmClickListener: OnFilmClickListener
+) : ListAdapter<FilmModel, FilmHolder>(FilmDiffUtilCallback()) {
 
-    private var onFilmItemClickListener: OnFilmItemClickListener? = null
-
-    fun attachListener(onFilmItemClickListener: OnFilmItemClickListener) {
-        this.onFilmItemClickListener = onFilmItemClickListener
-    }
-
-    interface OnFilmItemClickListener {
-        fun onFilmItemClick(filmId: Int)
+    interface OnFilmClickListener {
+        fun onFilmClick(filmModel: FilmModel)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmHolder {
@@ -26,7 +22,7 @@ class FilmsAdapter : ListAdapter<FilmModel, FilmHolder>(FilmDiffUtilCallback()) 
                 parent,
                 false
             ),
-            onFilmItemClickListener
+            onFilmClickListener
         )
     }
 

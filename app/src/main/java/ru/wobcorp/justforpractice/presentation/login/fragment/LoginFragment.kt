@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import ru.wobcorp.justforpractice.R
 import ru.wobcorp.justforpractice.databinding.LoginFragmentBinding
-import ru.wobcorp.justforpractice.presentation.mainactivity.MainActivity
+import ru.wobcorp.justforpractice.presentation.mainactivity.FilmsActivity
 import ru.wobcorp.justforpractice.utils.SharedPrefHelper
 import ru.wobcorp.justforpractice.utils.observe
 
@@ -59,7 +59,7 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
 
     private fun observeViewModel() {
         viewModel.navigateMainScreen.observe(lifecycleScope) {
-            startActivity(MainActivity.getIntent(requireContext()))
+            startActivity(FilmsActivity.getIntent(requireContext()))
         }
         viewModel.errorInputLogin.observe(lifecycleScope) {
             val message = if (it) {

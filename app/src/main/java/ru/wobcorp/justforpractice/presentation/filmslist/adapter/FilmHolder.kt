@@ -8,7 +8,7 @@ import ru.wobcorp.justforpractice.glide.RemoteImage
 
 class FilmHolder(
     private val binding: ListItemFilmBinding,
-    private val listener: FilmsAdapter.OnFilmItemClickListener?
+    private val listener: FilmsAdapter.OnFilmClickListener
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: FilmModel) {
@@ -17,7 +17,7 @@ class FilmHolder(
             .into(binding.filmPoster)
 
         itemView.setOnClickListener {
-            listener?.onFilmItemClick(item.id)
+            listener.onFilmClick(item)
         }
     }
 }
