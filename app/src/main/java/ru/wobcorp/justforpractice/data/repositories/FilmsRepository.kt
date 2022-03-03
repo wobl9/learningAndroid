@@ -9,7 +9,6 @@ import ru.wobcorp.justforpractice.domain.models.FilmModel
 import ru.wobcorp.justforpractice.domain.models.FilmsLanguage
 import ru.wobcorp.justforpractice.domain.models.FilmsSourceModel
 import ru.wobcorp.justforpractice.utils.Either
-import timber.log.Timber
 import javax.inject.Inject
 
 class FilmsRepository @Inject constructor(

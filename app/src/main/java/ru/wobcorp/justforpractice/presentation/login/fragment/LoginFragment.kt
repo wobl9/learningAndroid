@@ -1,18 +1,19 @@
 package ru.wobcorp.justforpractice.presentation.login.fragment
 
+import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import ru.wobcorp.justforpractice.Application
 import ru.wobcorp.justforpractice.R
 import ru.wobcorp.justforpractice.databinding.LoginFragmentBinding
-import ru.wobcorp.justforpractice.presentation.mainactivity.FilmsActivity
-import ru.wobcorp.justforpractice.utils.SharedPrefHelper
+import ru.wobcorp.justforpractice.presentation.filmsactivity.FilmsActivity
 import ru.wobcorp.justforpractice.utils.observe
+import ru.wobcorp.justforpractice.utils.states.LoginViewState
+import javax.inject.Inject
 
 class LoginFragment : Fragment(R.layout.login_fragment) {
 
@@ -20,35 +21,37 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
         fun newInstance(): LoginFragment {
             return LoginFragment()
         }
-
-        private const val LOGIN = "LOGIN"
-        private const val PASSWORD = "PASSWORD"
-        private const val IS_LOGIN = "IS_LOGIN"
     }
 
-    private lateinit var sharedPrefHelper: SharedPrefHelper
+    @Inject
+    lateinit var factory: LoginViewModel.Factory
+    private var login: String? = null
+    private var password: String? = null
     private var _binding: LoginFragmentBinding? = null
     private val binding: LoginFragmentBinding
         get() = _binding!!
-    private val viewModel by viewModels<LoginViewModel> { LoginViewModel.Factory() }
-    private lateinit var login: String
-    private lateinit var password: String
+    private val viewModel by viewModels<LoginViewModel> { factory }
+
+    override fun onAttach(context: Context) {
+        Application.dagger.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = LoginFragmentBinding.bind(view)
-        sharedPrefHelper = SharedPrefHelper(requireContext())
-        addTextChangeListeners()
-        observeViewModel()
         binding.apply {
             authButton.setOnClickListener {
-                login = binding.etLogin.text.toString()
-                password = binding.etPassword.text.toString()
-                val isFieldsValid = viewModel.checkUserData(login, password)
-                if (isFieldsValid) {
-                    checkLoginAndPassword(login, password)
-                }
+                login = etLogin.text?.toString()
+                password = etPassword.text?.toString()
+                viewModel.checkUserData(login, password)
             }
+        }
+        viewModel.navigateMainScreen.observe(lifecycleScope) {
+            startActivity(FilmsActivity.getIntent(requireContext()))
+        }
+        viewModel.loginState.observe(lifecycleScope) { loginViewState ->
+            renderState(loginViewState)
         }
     }
 
@@ -57,70 +60,33 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
         _binding = null
     }
 
-    private fun observeViewModel() {
-        viewModel.navigateMainScreen.observe(lifecycleScope) {
-            startActivity(FilmsActivity.getIntent(requireContext()))
+    private fun renderState(loginViewState: LoginViewState) {
+        when (loginViewState) {
+            is LoginViewState.Loading -> {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.loading_data),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            is LoginViewState.Error -> {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.error_loading_data),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            is LoginViewState.Success -> {
+                if (loginViewState.success) {
+                    viewModel.onAuthClick()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.error_login_or_password),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
-        viewModel.errorInputLogin.observe(lifecycleScope) {
-            val message = if (it) {
-                getString(R.string.error_login)
-            } else null
-            binding.tilLogin.error = message
-        }
-        viewModel.errorInputPassword.observe(lifecycleScope) {
-            val message = if (it) {
-                getString(R.string.error_password)
-            } else null
-            binding.tilPassword.error = message
-        }
-    }
-
-    private fun checkLoginAndPassword(login: String, password: String) {
-        val isSessionSave = sharedPrefHelper.getBoolean(IS_LOGIN)
-        val isLoginCorrect = sharedPrefHelper.getString(LOGIN) == login
-        val isPasswordCorrect = sharedPrefHelper.getString(PASSWORD) == password
-        if (isSessionSave && isLoginCorrect && isPasswordCorrect) {
-            viewModel.onAuthClick()
-        } else if (isSessionSave && (!isLoginCorrect || !isPasswordCorrect)) {
-            Toast.makeText(
-                requireContext(),
-                getString(R.string.error_login_or_password),
-                Toast.LENGTH_SHORT
-            ).show()
-        } else if (!isSessionSave) {
-            saveSession(login, password)
-            viewModel.onAuthClick()
-        }
-    }
-
-    private fun saveSession(login: String, password: String) {
-        sharedPrefHelper.put(LOGIN, login)
-        sharedPrefHelper.put(PASSWORD, password)
-        sharedPrefHelper.put(IS_LOGIN, true)
-    }
-
-    private fun addTextChangeListeners() {
-        binding.etLogin.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                viewModel.resetErrorInputLogin()
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-            }
-        })
-        binding.etPassword.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                viewModel.resetErrorInputPassword()
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-            }
-        })
     }
 }

@@ -1,4 +1,4 @@
-package ru.wobcorp.justforpractice.presentation.mainactivity
+package ru.wobcorp.justforpractice.presentation.filmsactivity
 
 import android.content.Context
 import android.content.Intent
@@ -12,7 +12,8 @@ import ru.wobcorp.justforpractice.presentation.filmslist.DaggerFilmsComponent
 import ru.wobcorp.justforpractice.presentation.filmslist.FilmsComponent
 import ru.wobcorp.justforpractice.presentation.filmslist.FilmsFragment
 import ru.wobcorp.justforpractice.utils.ComponentProvider
-import ru.wobcorp.justforpractice.utils.replace
+import ru.wobcorp.justforpractice.utils.replaceWithBackStack
+import ru.wobcorp.justforpractice.utils.replaceWithoutBackStack
 
 class FilmsActivity : AppCompatActivity(), FilmsFragment.FilmDetailLauncher,
     ComponentProvider<FilmsComponent> {
@@ -33,7 +34,7 @@ class FilmsActivity : AppCompatActivity(), FilmsFragment.FilmDetailLauncher,
             .create(Application.dagger).also { it.inject(this) }
 
         if (savedInstanceState == null)
-            supportFragmentManager.replace(
+            supportFragmentManager.replaceWithoutBackStack(
                 R.id.mainContainer,
                 FilmsFragment.newInstance()
             )
@@ -44,7 +45,7 @@ class FilmsActivity : AppCompatActivity(), FilmsFragment.FilmDetailLauncher,
     }
 
     override fun launchFilmDetail(filmId: Int) {
-        supportFragmentManager.replace(
+        supportFragmentManager.replaceWithBackStack(
             R.id.mainContainer,
             FilmDetailFragment.newInstance(filmId)
         )
