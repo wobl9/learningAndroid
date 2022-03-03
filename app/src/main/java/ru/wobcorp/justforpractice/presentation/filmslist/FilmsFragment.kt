@@ -65,18 +65,18 @@ class FilmsFragment : Fragment(R.layout.films_fragment) {
 
     private fun observeViewModel() {
         viewModel.getFilms()
-        viewModel.state.observe(lifecycleScope) {
-            renderState(it)
+        viewModel.state.observe(lifecycleScope) { filmsViewState ->
+            renderState(filmsViewState)
         }
     }
 
-    private fun renderState(state: FilmsViewState) {
-        when (state) {
+    private fun renderState(filmsViewState: FilmsViewState) {
+        when (filmsViewState) {
             is FilmsViewState.Loading -> {
                 renderLoading()
             }
             is FilmsViewState.Success -> {
-                adapter.submitList(state.data)
+                adapter.submitList(filmsViewState.data)
                 renderSuccess()
             }
             is FilmsViewState.Error -> {
