@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">JustForPractice</string>
     <string name="login_screen_auth">Авторизоваться</string>
+    <string name="poster_of_film">Постер фильма</string>
+    <string name="title">Название фильма</string>
+    <string name="overview">Описание фильма</string>
+    <string name="tv_error">Ошибка загрузки</string>
+    <string name="film_detail_not_found">Детали фильма не найдены</string>
+    <string name="tv_loading">Идёт загрузка…</string>
+    <string name="btn_retry">Повторить попытку</string>
+    <string name="args_not_received">Аргументы не получены</string>
+    <string name="hint_login">Логин:</string>
+    <string name="hint_password">Пароль:</string>
+    <string name="error_login">Логин должен содержать не менее 6 символов</string>
+    <string name="error_password">Пароль должен содержать не менее 6 символов</string>
+    <string name="error_login_or_password">Неверный логин или пароль</string>
 </resources>

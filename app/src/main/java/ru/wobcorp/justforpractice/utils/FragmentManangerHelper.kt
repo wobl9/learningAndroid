@@ -10,5 +10,6 @@ fun FragmentManager.replace(
 ) {
     beginTransaction()
         .replace(containerId, fragment)
+        .addToBackStack(null)
         .commit()
 }
