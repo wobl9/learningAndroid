@@ -13,5 +13,5 @@
     <string name="hint_password">Пароль:</string>
     <string name="error_login_or_password">Неверный логин или пароль</string>
     <string name="error_loading_data">Ошибка загрузки данных</string>
-    <string name="loading_data">Авторизуйтесь для продолжения</string>
+    <string name="loading_data">Загрузка данных</string>
 </resources>

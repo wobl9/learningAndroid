@@ -1,16 +1,14 @@
 package ru.wobcorp.justforpractice.data.repositories
 
-import android.content.SharedPreferences
 import io.reactivex.rxjava3.core.Single
+import ru.wobcorp.justforpractice.utils.preferences.AppPreferenceImpl
 import javax.inject.Inject
 
 class UserDataRepository @Inject constructor(
-    private val sharedPreferences: SharedPreferences
+    private val appPreferenceImpl: AppPreferenceImpl
 ) {
 
     companion object {
-        private const val SP_KEY_LOGIN = "key_login"
-        private const val SP_KEY_PASSWORD = "key_password"
         private const val SP_LOGIN_VALUE = "qwerty"
         private const val SP_PASSWORD_VALUE = 1111
         private const val DEF_VALUE_LOGIN = ""
@@ -18,16 +16,16 @@ class UserDataRepository @Inject constructor(
     }
 
     init {
-        sharedPreferences.edit().putString(SP_KEY_LOGIN, SP_LOGIN_VALUE).apply()
-        sharedPreferences.edit().putInt(SP_KEY_PASSWORD, SP_PASSWORD_VALUE).apply()
+        appPreferenceImpl.setLogin(SP_LOGIN_VALUE)
+        appPreferenceImpl.setPassword(SP_PASSWORD_VALUE)
     }
 
     fun checkAuthSuccess(inputLogin: String?, inputPassword: String?): Single<Boolean> {
         return Single.fromCallable {
             val login = parseLogin(inputLogin)
             val password = parsePassword(inputPassword)
-            val rightLogin = sharedPreferences.getString(SP_KEY_LOGIN, DEF_VALUE_LOGIN)
-            val rightPassword = sharedPreferences.getInt(SP_KEY_PASSWORD, DEF_VALUE_PASSWORD)
+            val rightLogin = appPreferenceImpl.getLogin()
+            val rightPassword = appPreferenceImpl.getPassword()
             login == rightLogin && password == rightPassword
         }
     }
