@@ -3,7 +3,6 @@ package ru.wobcorp.justforpractice.presentation.login.fragment
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -12,6 +11,7 @@ import ru.wobcorp.justforpractice.R
 import ru.wobcorp.justforpractice.databinding.LoginFragmentBinding
 import ru.wobcorp.justforpractice.presentation.filmsactivity.FilmsActivity
 import ru.wobcorp.justforpractice.utils.observe
+import ru.wobcorp.justforpractice.utils.showSnackbar
 import ru.wobcorp.justforpractice.utils.states.LoginViewState
 import javax.inject.Inject
 
@@ -45,13 +45,13 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
                 login = etLogin.text?.toString()
                 password = etPassword.text?.toString()
                 viewModel.checkUserData(login, password)
+                viewModel.loginState.observe(lifecycleScope) { loginViewState ->
+                    renderState(loginViewState)
+                }
             }
         }
         viewModel.navigateMainScreen.observe(lifecycleScope) {
             startActivity(FilmsActivity.getIntent(requireContext()))
-        }
-        viewModel.loginState.observe(lifecycleScope) { loginViewState ->
-            renderState(loginViewState)
         }
     }
 
@@ -63,28 +63,16 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
     private fun renderState(loginViewState: LoginViewState) {
         when (loginViewState) {
             is LoginViewState.Loading -> {
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.loading_data),
-                    Toast.LENGTH_SHORT
-                ).show()
+                binding.root.showSnackbar(getString(R.string.loading_data))
             }
             is LoginViewState.Error -> {
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.error_loading_data),
-                    Toast.LENGTH_SHORT
-                ).show()
+                binding.root.showSnackbar(getString(R.string.error_loading_data))
             }
             is LoginViewState.Success -> {
                 if (loginViewState.success) {
                     viewModel.onAuthClick()
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.error_login_or_password),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    binding.root.showSnackbar(getString(R.string.error_login_or_password))
                 }
             }
         }
