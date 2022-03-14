@@ -2,11 +2,11 @@ package ru.wobcorp.justforpractice.utils.preferences
 
 interface AppPreference {
 
-    fun setLogin(login: String)
+    fun putString(key: String, value: String)
 
-    fun setPassword(password: Int)
+    fun putInt(key: String, value: Int)
 
-    fun getLogin(): String
+    fun getString(key: String): String?
 
-    fun getPassword(): Int
+    fun getInt(key: String): Int
 }

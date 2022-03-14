@@ -63,16 +63,16 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
     private fun renderState(loginViewState: LoginViewState) {
         when (loginViewState) {
             is LoginViewState.Loading -> {
-                binding.root.showSnackbar(getString(R.string.loading_data))
+                showSnackbar(requireView(), getString(R.string.loading_data))
             }
             is LoginViewState.Error -> {
-                binding.root.showSnackbar(getString(R.string.error_loading_data))
+                showSnackbar(requireView(), getString(R.string.error_loading_data))
             }
             is LoginViewState.Success -> {
                 if (loginViewState.success) {
                     viewModel.onAuthClick()
                 } else {
-                    binding.root.showSnackbar(getString(R.string.error_login_or_password))
+                    showSnackbar(requireView(), getString(R.string.error_login_or_password))
                 }
             }
         }
