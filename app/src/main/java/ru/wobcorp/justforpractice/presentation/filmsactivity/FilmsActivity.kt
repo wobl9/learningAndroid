@@ -4,16 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import ru.wobcorp.justforpractice.Application
 import ru.wobcorp.justforpractice.R
-import ru.wobcorp.justforpractice.databinding.MainActivityBinding
-import ru.wobcorp.justforpractice.presentation.filmdetail.FilmDetailFragment
+import ru.wobcorp.justforpractice.databinding.FilmsActivityBinding
 import ru.wobcorp.justforpractice.presentation.filmslist.DaggerFilmsComponent
 import ru.wobcorp.justforpractice.presentation.filmslist.FilmsComponent
 import ru.wobcorp.justforpractice.presentation.filmslist.FilmsFragment
+import ru.wobcorp.justforpractice.presentation.navigation.ScreenOpener
 import ru.wobcorp.justforpractice.utils.ComponentProvider
-import ru.wobcorp.justforpractice.utils.replaceWithBackStack
-import ru.wobcorp.justforpractice.utils.replaceWithoutBackStack
+import javax.inject.Inject
 
 class FilmsActivity : AppCompatActivity(), FilmsFragment.FilmDetailLauncher,
     ComponentProvider<FilmsComponent> {
@@ -24,20 +26,38 @@ class FilmsActivity : AppCompatActivity(), FilmsFragment.FilmDetailLauncher,
         }
     }
 
+    @Inject
+    lateinit var navigatorHolder: NavigatorHolder
+
+    @Inject
+    lateinit var screenOpener: ScreenOpener
+
+    @Inject
+    lateinit var router: Router
+
     private var filmsComponent: FilmsComponent? = null
+
+    private val navigator = AppNavigator(this, R.id.filmsContainer)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MainActivityBinding.inflate(layoutInflater).root.let(::setContentView)
+        FilmsActivityBinding.inflate(layoutInflater).root.let(::setContentView)
 
         filmsComponent = DaggerFilmsComponent.factory()
             .create(Application.dagger).also { it.inject(this) }
 
         if (savedInstanceState == null)
-            supportFragmentManager.replaceWithoutBackStack(
-                R.id.mainContainer,
-                FilmsFragment.newInstance()
-            )
+            router.replaceScreen(screenOpener.navigateToFilmsFragment())
+    }
+
+    override fun onResume() {
+        super.onResume()
+        navigatorHolder.setNavigator(navigator)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        navigatorHolder.removeNavigator()
     }
 
     override fun provideComponent(): FilmsComponent {
@@ -45,9 +65,6 @@ class FilmsActivity : AppCompatActivity(), FilmsFragment.FilmDetailLauncher,
     }
 
     override fun launchFilmDetail(filmId: Int) {
-        supportFragmentManager.replaceWithBackStack(
-            R.id.mainContainer,
-            FilmDetailFragment.newInstance(filmId)
-        )
+        router.navigateTo(screenOpener.navigateToFilmDetailFragment(filmId))
     }
 }

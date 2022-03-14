@@ -13,6 +13,7 @@ import javax.inject.Singleton
     modules = [
         ApplicationModule::class,
         NetworkModule::class,
+        AppCiceroneModule::class
     ]
 )
 interface ApplicationComponent : ApplicationDependencies {

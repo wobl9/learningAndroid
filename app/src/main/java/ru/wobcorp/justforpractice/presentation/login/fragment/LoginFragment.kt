@@ -9,7 +9,6 @@ import androidx.lifecycle.lifecycleScope
 import ru.wobcorp.justforpractice.Application
 import ru.wobcorp.justforpractice.R
 import ru.wobcorp.justforpractice.databinding.LoginFragmentBinding
-import ru.wobcorp.justforpractice.presentation.filmsactivity.FilmsActivity
 import ru.wobcorp.justforpractice.utils.observe
 import ru.wobcorp.justforpractice.utils.showSnackbar
 import ru.wobcorp.justforpractice.utils.states.LoginViewState
@@ -21,6 +20,10 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
         fun newInstance(): LoginFragment {
             return LoginFragment()
         }
+    }
+
+    interface FilmsLauncher {
+        fun launchFilms()
     }
 
     @Inject
@@ -51,7 +54,7 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
             }
         }
         viewModel.navigateMainScreen.observe(lifecycleScope) {
-            startActivity(FilmsActivity.getIntent(requireContext()))
+            openFilms()
         }
     }
 
@@ -76,5 +79,9 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
                 }
             }
         }
+    }
+
+    private fun openFilms() {
+        (requireActivity() as FilmsLauncher).launchFilms()
     }
 }
