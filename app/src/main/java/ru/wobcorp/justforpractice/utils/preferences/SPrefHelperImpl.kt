@@ -3,27 +3,27 @@ package ru.wobcorp.justforpractice.utils.preferences
 import android.content.SharedPreferences
 import javax.inject.Inject
 
-class AppPreferenceImpl @Inject constructor(
+class SPrefHelperImpl @Inject constructor(
     private val sharedPreferences: SharedPreferences
-) : AppPreference {
+) : SPrefHelper {
 
-        companion object {
+    companion object {
         private const val DEF_VALUE_STRING = ""
-        private const val DEF_VALUE_INT = 0
+        private const val DEF_VALUE_INT = -1
     }
 
     private val editor: SharedPreferences.Editor = sharedPreferences.edit()
 
-    override fun putString(key: String, value: String) {
+    override fun saveString(key: String, value: String) {
         editor.putString(key, value).apply()
     }
 
-    override fun putInt(key: String, value: Int) {
+    override fun saveInt(key: String, value: Int) {
         editor.putInt(key, value).apply()
     }
 
-    override fun getString(key: String): String? {
-        return sharedPreferences.getString(key, DEF_VALUE_STRING)
+    override fun getString(key: String): String {
+        return sharedPreferences.getString(key, DEF_VALUE_STRING).toString()
     }
 
     override fun getInt(key: String): Int {
