@@ -2,11 +2,7 @@ package ru.wobcorp.justforpractice.presentation.navigation
 
 import com.github.terrakok.cicerone.Screen
 
-interface ScreenOpener {
-
-    fun navigateToLoginFragment(): Screen
-
-    fun navigateToFilmsActivity(): Screen
+interface FilmsScreenOpener {
 
     fun navigateToFilmsFragment(): Screen
 

@@ -12,13 +12,11 @@ import ru.wobcorp.justforpractice.R
 import ru.wobcorp.justforpractice.databinding.FilmsActivityBinding
 import ru.wobcorp.justforpractice.presentation.filmslist.DaggerFilmsComponent
 import ru.wobcorp.justforpractice.presentation.filmslist.FilmsComponent
-import ru.wobcorp.justforpractice.presentation.filmslist.FilmsFragment
-import ru.wobcorp.justforpractice.presentation.navigation.ScreenOpener
+import ru.wobcorp.justforpractice.presentation.navigation.FilmsScreenOpener
 import ru.wobcorp.justforpractice.utils.ComponentProvider
 import javax.inject.Inject
 
-class FilmsActivity : AppCompatActivity(), FilmsFragment.FilmDetailLauncher,
-    ComponentProvider<FilmsComponent> {
+class FilmsActivity : AppCompatActivity(), ComponentProvider<FilmsComponent> {
 
     companion object {
         fun getIntent(context: Context): Intent {
@@ -30,7 +28,7 @@ class FilmsActivity : AppCompatActivity(), FilmsFragment.FilmDetailLauncher,
     lateinit var navigatorHolder: NavigatorHolder
 
     @Inject
-    lateinit var screenOpener: ScreenOpener
+    lateinit var filmsScreenOpener: FilmsScreenOpener
 
     @Inject
     lateinit var router: Router
@@ -47,7 +45,7 @@ class FilmsActivity : AppCompatActivity(), FilmsFragment.FilmDetailLauncher,
             .create(Application.dagger).also { it.inject(this) }
 
         if (savedInstanceState == null)
-            router.replaceScreen(screenOpener.navigateToFilmsFragment())
+            router.replaceScreen(filmsScreenOpener.navigateToFilmsFragment())
     }
 
     override fun onResume() {
@@ -62,9 +60,5 @@ class FilmsActivity : AppCompatActivity(), FilmsFragment.FilmDetailLauncher,
 
     override fun provideComponent(): FilmsComponent {
         return requireNotNull(filmsComponent) { "component not initialized" }
-    }
-
-    override fun launchFilmDetail(filmId: Int) {
-        router.navigateTo(screenOpener.navigateToFilmDetailFragment(filmId))
     }
 }

@@ -1,35 +1,36 @@
-package ru.wobcorp.justforpractice.presentation.filmslist
+package ru.wobcorp.justforpractice.presentation.login.navigation
 
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
 import dagger.Module
 import dagger.Provides
-import ru.wobcorp.justforpractice.presentation.navigation.FilmsScreenOpener
-import ru.wobcorp.justforpractice.presentation.navigation.FilmsScreenOpenerImpl
+import javax.inject.Singleton
 
 @Module
-class FilmsCiceroneModule {
+class LoginCiceroneModule {
 
     @Provides
-    @FilmsScope
-    fun provideCicerone(): Cicerone<Router> = Cicerone.create()
+    @Singleton
+    fun provideCicerone(): Cicerone<Router> {
+        return Cicerone.create()
+    }
 
     @Provides
-    @FilmsScope
+    @Singleton
     fun provideNavigatorHolder(cicerone: Cicerone<Router>): NavigatorHolder {
         return cicerone.getNavigatorHolder()
     }
 
     @Provides
-    @FilmsScope
+    @Singleton
     fun provideRouter(cicerone: Cicerone<Router>): Router {
         return cicerone.router
     }
 
     @Provides
-    @FilmsScope
-    fun provideScreenOpener(): FilmsScreenOpener {
-        return FilmsScreenOpenerImpl()
+    @Singleton
+    fun provideScreenOpener(): LoginScreenOpener {
+        return LoginScreenOpenerImpl()
     }
 }

@@ -22,10 +22,6 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
         }
     }
 
-    interface FilmsLauncher {
-        fun launchFilms()
-    }
-
     @Inject
     lateinit var factory: LoginViewModel.Factory
     private var login: String? = null
@@ -53,9 +49,6 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
                 }
             }
         }
-        viewModel.navigateMainScreen.observe(lifecycleScope) {
-            openFilms()
-        }
     }
 
     override fun onDestroyView() {
@@ -79,9 +72,5 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
                 }
             }
         }
-    }
-
-    private fun openFilms() {
-        (requireActivity() as FilmsLauncher).launchFilms()
     }
 }

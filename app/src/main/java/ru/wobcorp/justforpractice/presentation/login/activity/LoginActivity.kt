@@ -8,17 +8,16 @@ import com.github.terrakok.cicerone.androidx.AppNavigator
 import ru.wobcorp.justforpractice.Application
 import ru.wobcorp.justforpractice.R
 import ru.wobcorp.justforpractice.databinding.LoginActivityBinding
-import ru.wobcorp.justforpractice.presentation.login.fragment.LoginFragment
-import ru.wobcorp.justforpractice.presentation.navigation.ScreenOpener
+import ru.wobcorp.justforpractice.presentation.login.navigation.LoginScreenOpener
 import javax.inject.Inject
 
-class LoginActivity : AppCompatActivity(), LoginFragment.FilmsLauncher {
+class LoginActivity : AppCompatActivity() {
 
     @Inject
     lateinit var navigatorHolder: NavigatorHolder
 
     @Inject
-    lateinit var screenOpener: ScreenOpener
+    lateinit var loginScreenOpener: LoginScreenOpener
 
     @Inject
     lateinit var router: Router
@@ -31,7 +30,7 @@ class LoginActivity : AppCompatActivity(), LoginFragment.FilmsLauncher {
         Application.dagger.inject(this)
 
         if (savedInstanceState == null) {
-            router.replaceScreen(screenOpener.navigateToLoginFragment())
+            router.replaceScreen(loginScreenOpener.navigateToLoginFragment())
         }
     }
 
@@ -43,9 +42,5 @@ class LoginActivity : AppCompatActivity(), LoginFragment.FilmsLauncher {
     override fun onPause() {
         super.onPause()
         navigatorHolder.removeNavigator()
-    }
-
-    override fun launchFilms() {
-        router.replaceScreen(screenOpener.navigateToFilmsActivity())
     }
 }
