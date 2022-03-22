@@ -69,7 +69,7 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
                 showSnackbar(requireView(), getString(R.string.error_loading_data))
             }
             is LoginViewState.Success -> {
-                if (loginViewState.success) {
+                if (loginViewState.loginSuccess) {
                     viewModel.onAuthClick()
                 } else {
                     showSnackbar(requireView(), getString(R.string.error_login_or_password))
