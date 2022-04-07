@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
+import ru.wobcorp.justforpractice.utils.preferences.SPrefHelper
+import ru.wobcorp.justforpractice.utils.preferences.SPrefHelperImpl
 import javax.inject.Singleton
 
 @Module
@@ -13,6 +15,12 @@ class ApplicationModule {
     @Provides
     fun providePreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSPrefHelper(sharedPreferences: SharedPreferences): SPrefHelper {
+        return SPrefHelperImpl(sharedPreferences)
     }
 
     companion object {

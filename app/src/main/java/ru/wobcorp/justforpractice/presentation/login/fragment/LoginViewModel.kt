@@ -2,77 +2,51 @@ package ru.wobcorp.justforpractice.presentation.login.fragment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.github.terrakok.cicerone.Router
+import ru.wobcorp.justforpractice.domain.usecases.AppAuthUseCase
+import ru.wobcorp.justforpractice.presentation.login.navigation.LoginScreenOpener
 import ru.wobcorp.justforpractice.utils.BaseViewModel
-import ru.wobcorp.justforpractice.utils.emitSingleEvent
-import ru.wobcorp.justforpractice.utils.singleEvent
+import ru.wobcorp.justforpractice.utils.event
+import ru.wobcorp.justforpractice.utils.get
+import ru.wobcorp.justforpractice.utils.states.LoginViewState
+import javax.inject.Inject
 
-class LoginViewModel : BaseViewModel() {
+class LoginViewModel(
+    private val appAuthUseCase: AppAuthUseCase,
+    private val loginScreenOpener: LoginScreenOpener,
+    private val router: Router
+) : BaseViewModel() {
 
-    companion object {
-        private const val DEFAULT_STRING = ""
-        private const val DEFAULT_NUMBER = 0
-        private const val COUNT_OF_SYMBOLS = 6
-    }
-
-    val navigateMainScreen = singleEvent<Unit>()
-    val errorInputLogin = singleEvent<Boolean>()
-    val errorInputPassword = singleEvent<Boolean>()
+    val loginState = event<LoginViewState>(LoginViewState.Loading)
 
     fun onAuthClick() {
-        emitSingleEvent { navigateMainScreen.emit(Unit) }
+        router.navigateTo(loginScreenOpener.navigateToFilmsActivity())
     }
 
-    fun checkUserData(inputLogin: String?, inputPassword: String?): Boolean {
-        val login = parseLogin(inputLogin)
-        val password = parsePassword(inputPassword)
-        return validateInputFields(login, password)
-    }
-
-    private fun parseLogin(inputLogin: String?): String {
-        return inputLogin?.trim() ?: DEFAULT_STRING
-    }
-
-    private fun parsePassword(inputPassword: String?): Int {
-        return try {
-            inputPassword?.trim()?.toInt() ?: DEFAULT_NUMBER
-        } catch (e: Exception) {
-            DEFAULT_NUMBER
-        }
-    }
-
-    private fun validateInputFields(login: String, password: Int): Boolean {
-        var result = true
-        if (login.isBlank() || login.length < COUNT_OF_SYMBOLS) {
-            emitSingleEvent {
-                errorInputLogin.emit(true)
+    fun checkUserData(inputLogin: String?, inputPassword: String?) {
+        appAuthUseCase.execute(inputLogin, inputPassword).get(
+            disposable = disposables,
+            onError = { error ->
+                loginState.value = LoginViewState.Error(error)
+            },
+            onSuccess = { boolean ->
+                loginState.value = LoginViewState.Success(boolean)
             }
-            result = false
-        }
-        if (password.toString().length < COUNT_OF_SYMBOLS) {
-            emitSingleEvent {
-                errorInputPassword.emit(true)
-            }
-            result = false
-        }
-        return result
-    }
-
-    fun resetErrorInputLogin() {
-        emitSingleEvent {
-            errorInputLogin.emit(false)
-        }
-    }
-
-    fun resetErrorInputPassword() {
-        emitSingleEvent {
-            errorInputPassword.emit(false)
-        }
+        )
     }
 
     @Suppress("UNCHECKED_CAST")
-    class Factory : ViewModelProvider.Factory {
+    class Factory @Inject constructor(
+        private val appAuthUseCase: AppAuthUseCase,
+        private val loginScreenOpener: LoginScreenOpener,
+        private val router: Router
+    ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return LoginViewModel() as T
+            return LoginViewModel(
+                appAuthUseCase = appAuthUseCase,
+                loginScreenOpener = loginScreenOpener,
+                router = router
+            ) as T
         }
     }
 }

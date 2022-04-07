@@ -22,10 +22,6 @@ private const val DEFAULT_SPACING = 5
 
 class FilmsFragment : Fragment(R.layout.films_fragment) {
 
-    interface FilmDetailLauncher {
-        fun launchFilmDetail(filmId: Int)
-    }
-
     companion object {
         fun newInstance() = FilmsFragment()
     }
@@ -47,7 +43,7 @@ class FilmsFragment : Fragment(R.layout.films_fragment) {
         _binding = FilmsFragmentBinding.bind(view)
         adapter = FilmsAdapter(object : FilmsAdapter.OnFilmClickListener {
             override fun onFilmClick(filmModel: FilmModel) {
-                openFilmDetail(filmModel.id)
+                viewModel.onFilmClick(filmModel.id)
             }
         })
         decorateRecyclerView()
@@ -59,24 +55,20 @@ class FilmsFragment : Fragment(R.layout.films_fragment) {
         _binding = null
     }
 
-    private fun openFilmDetail(filmId: Int) {
-        (requireActivity() as FilmDetailLauncher).launchFilmDetail(filmId)
-    }
-
     private fun observeViewModel() {
         viewModel.getFilms()
-        viewModel.state.observe(lifecycleScope) {
-            renderState(it)
+        viewModel.state.observe(lifecycleScope) { filmsViewState ->
+            renderState(filmsViewState)
         }
     }
 
-    private fun renderState(state: FilmsViewState) {
-        when (state) {
+    private fun renderState(filmsViewState: FilmsViewState) {
+        when (filmsViewState) {
             is FilmsViewState.Loading -> {
                 renderLoading()
             }
             is FilmsViewState.Success -> {
-                adapter.submitList(state.data)
+                adapter.submitList(filmsViewState.data)
                 renderSuccess()
             }
             is FilmsViewState.Error -> {

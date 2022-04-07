@@ -11,7 +11,7 @@
     <string name="args_not_received">Аргументы не получены</string>
     <string name="hint_login">Логин:</string>
     <string name="hint_password">Пароль:</string>
-    <string name="error_login">Логин должен содержать не менее 6 символов</string>
-    <string name="error_password">Пароль должен содержать не менее 6 символов</string>
     <string name="error_login_or_password">Неверный логин или пароль</string>
+    <string name="error_loading_data">Ошибка загрузки данных</string>
+    <string name="loading_data">Загрузка данных</string>
 </resources>
