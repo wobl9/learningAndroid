@@ -11,7 +11,8 @@ import javax.inject.Scope
 annotation class FilmsScope
 
 @Component(
-    dependencies = [ApplicationDependencies::class]
+    dependencies = [ApplicationDependencies::class],
+    modules = [FilmsCiceroneModule::class]
 )
 
 @FilmsScope
