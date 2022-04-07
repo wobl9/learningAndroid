@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">JustForPractice</string>
+    <string name="films">МОИ ФИЛЬМЫ</string>
     <string name="login_screen_auth">Авторизоваться</string>
     <string name="poster_of_film">Постер фильма</string>
     <string name="title">Название фильма</string>
@@ -14,4 +15,6 @@
     <string name="error_login_or_password">Неверный логин или пароль</string>
     <string name="error_loading_data">Ошибка загрузки данных</string>
     <string name="loading_data">Загрузка данных</string>
+    <string name="popular">Популярные</string>
+    <string name="top_rated">Рейтинговые</string>
 </resources>

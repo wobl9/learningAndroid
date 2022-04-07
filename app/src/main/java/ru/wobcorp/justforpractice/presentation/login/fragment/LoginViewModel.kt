@@ -20,7 +20,7 @@ class LoginViewModel(
     val loginState = event<LoginViewState>(LoginViewState.Loading)
 
     fun onAuthClick() {
-        router.navigateTo(loginScreenOpener.navigateToFilmsActivity())
+        router.newRootScreen(loginScreenOpener.navigateToFilmsActivity())
     }
 
     fun checkUserData(inputLogin: String?, inputPassword: String?) {

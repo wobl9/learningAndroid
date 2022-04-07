@@ -79,18 +79,24 @@ class FilmsFragment : Fragment(R.layout.films_fragment) {
 
     private fun renderLoading() {
         with(binding) {
-            tvLoading.isVisible = true
+            pbLoading.isVisible = true
             filmsList.isVisible = false
             tvError.isVisible = false
             btnRetry.isVisible = false
+            tvPopularFilms.isVisible = false
+            tvRatingFilms.isVisible = false
+            switchSort.isVisible = false
         }
     }
 
     private fun renderError() {
         with(binding) {
-            tvLoading.isVisible = false
+            pbLoading.isVisible = false
             filmsList.isVisible = true
             tvError.isVisible = true
+            tvPopularFilms.isVisible = false
+            tvRatingFilms.isVisible = false
+            switchSort.isVisible = false
             btnRetry.isVisible = true
             btnRetry.setOnClickListener {
                 viewModel.getFilms()
@@ -102,9 +108,12 @@ class FilmsFragment : Fragment(R.layout.films_fragment) {
         with(binding) {
             filmsList.adapter = adapter
             filmsList.isVisible = true
-            tvLoading.isVisible = false
+            pbLoading.isVisible = false
             tvError.isVisible = false
             btnRetry.isVisible = false
+            tvPopularFilms.isVisible = true
+            tvRatingFilms.isVisible = true
+            switchSort.isVisible = true
         }
     }
 
