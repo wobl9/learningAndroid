@@ -8,11 +8,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import ru.wobcorp.justforpractice.R
 import ru.wobcorp.justforpractice.databinding.FilmDetailFragmentBinding
 import ru.wobcorp.justforpractice.domain.models.FilmModel
 import ru.wobcorp.justforpractice.glide.RemoteImage
 import ru.wobcorp.justforpractice.presentation.filmslist.FilmsComponent
+import ru.wobcorp.justforpractice.utils.getCornerRadius
 import ru.wobcorp.justforpractice.utils.observe
 import ru.wobcorp.justforpractice.utils.putArguments
 import ru.wobcorp.justforpractice.utils.requireActivityComponent
@@ -65,7 +68,6 @@ class FilmDetailFragment : Fragment(R.layout.film_detail_fragment) {
     }
 
     private fun renderState(state: FilmDetailViewState) {
-        @Suppress("UNCHECKED_CAST")
         when (state) {
             is FilmDetailViewState.Loading -> {
                 renderLoading()
@@ -79,7 +81,7 @@ class FilmDetailFragment : Fragment(R.layout.film_detail_fragment) {
 
     private fun renderLoading() {
         with(binding) {
-            tvLoading.isVisible = true
+            pbLoading.isVisible = true
             tvError.isVisible = false
             btnRetry.isVisible = false
             filmPoster.isVisible = false
@@ -90,7 +92,7 @@ class FilmDetailFragment : Fragment(R.layout.film_detail_fragment) {
 
     private fun renderSuccess(filmModel: FilmModel) {
         with(binding) {
-            tvLoading.isVisible = false
+            pbLoading.isVisible = false
             tvError.isVisible = false
             btnRetry.isVisible = false
             filmPoster.isVisible = true
@@ -102,14 +104,15 @@ class FilmDetailFragment : Fragment(R.layout.film_detail_fragment) {
         binding.filmPoster.let {
             Glide.with(this)
                 .load(RemoteImage(filmModel.imageLink))
-                .fitCenter()
+                .transform(RoundedCorners(getCornerRadius(requireContext())))
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .into(it)
         }
     }
 
     private fun renderError() {
         with(binding) {
-            tvLoading.isVisible = false
+            pbLoading.isVisible = false
             tvError.isVisible = true
             btnRetry.isVisible = true
             filmPoster.isVisible = false
