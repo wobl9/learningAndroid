@@ -3,16 +3,19 @@ package ru.wobcorp.justforpractice.presentation.login.fragment
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import ru.wobcorp.justforpractice.Application
 import ru.wobcorp.justforpractice.R
 import ru.wobcorp.justforpractice.databinding.LoginFragmentBinding
+import ru.wobcorp.justforpractice.utils.hideKeyboard
 import ru.wobcorp.justforpractice.utils.observe
 import ru.wobcorp.justforpractice.utils.showSnackbar
 import ru.wobcorp.justforpractice.utils.states.LoginViewState
 import javax.inject.Inject
+
 
 class LoginFragment : Fragment(R.layout.login_fragment) {
 
@@ -40,13 +43,16 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
         super.onViewCreated(view, savedInstanceState)
         _binding = LoginFragmentBinding.bind(view)
         binding.apply {
-            authButton.setOnClickListener {
-                login = etLogin.text?.toString()
-                password = etPassword.text?.toString()
-                viewModel.checkUserData(login, password)
-                viewModel.loginState.observe(lifecycleScope) { loginViewState ->
-                    renderState(loginViewState)
+            etPassword.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    hideKeyboard(requireContext(), view)
+                    checkUserData()
                 }
+                true
+            }
+            authButton.setOnClickListener {
+                hideKeyboard(requireContext(), view)
+                checkUserData()
             }
         }
     }
@@ -54,6 +60,15 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun checkUserData() {
+        login = binding.etLogin.text?.toString()
+        password = binding.etPassword.text?.toString()
+        viewModel.checkUserData(login, password)
+        viewModel.loginState.observe(lifecycleScope) { loginViewState ->
+            renderState(loginViewState)
+        }
     }
 
     private fun renderState(loginViewState: LoginViewState) {
